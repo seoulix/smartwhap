@@ -1,0 +1,243 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #111827; /* Accessible body text on white */
+  --card: #ffffff;
+  --card-foreground: #374151;
+  --popover: #ffffff;
+  --popover-foreground: #374151;
+
+  --primary: #10b981; /* Emerald */
+  --primary-foreground: #ffffff;
+
+  --secondary: #0ea5e9; /* Sky */
+  --secondary-foreground: #ffffff;
+
+  --muted: #f9fafb; /* Subtle section bg */
+  --muted-foreground: #374151;
+
+  --accent: #0ea5e9;
+  --accent-foreground: #ffffff;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e4e4e7; /* Zinc-200 */
+  --input: #f9fafb; /* Input bg */
+  --ring: #0ea5e9; /* Focus ring accent */
+
+  /* Charts tuned to palette */
+  --chart-1: #10b981;
+  --chart-2: #0ea5e9;
+  --chart-3: #374151;
+  --chart-4: #e4e4e7;
+  --chart-5: #f9fafb;
+
+  --radius: 0.5rem;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #374151;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0ea5e9;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #0ea5e9;
+}
+
+.dark {
+  --background: #0f172a; /* Slate-900 */
+  --foreground: #f8fafc; /* Slate-50/100 */
+  --card: #0f172a;
+  --card-foreground: #e5e7eb; /* Gray-200 */
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+
+  --primary: #10b981;
+  --primary-foreground: #04120d;
+
+  --secondary: #0ea5e9;
+  --secondary-foreground: #042030;
+
+  --muted: #111827; /* Gray-900 */
+  --muted-foreground: #9ca3af; /* Gray-400 */
+
+  --accent: #0ea5e9;
+  --accent-foreground: #041018;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #1f2937;
+
+  --border: #1f2937; /* Gray-800 */
+  --input: #111827;
+  --ring: #0ea5e9;
+
+  --chart-1: #34d399; /* lighter emerald for dark */
+  --chart-2: #38bdf8;
+  --chart-3: #93a3b8; /* muted slate */
+  --chart-4: #1f2937;
+  --chart-5: #0b1324;
+
+  --sidebar: #0b1324;
+  --sidebar-foreground: #e5e7eb;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #04120d;
+  --sidebar-accent: #0ea5e9;
+  --sidebar-accent-foreground: #041018;
+  --sidebar-border: #1f2937;
+  --sidebar-ring: #0ea5e9;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+/* -------- Visibility & contrast -------- */
+.text-shadow {
+  text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+}
+
+/* -------- Marquee (no overlap) -------- */
+.marquee-wrapper {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.marquee-track {
+  display: inline-block;
+  padding-right: 4rem;        /* space between loops */
+  will-change: transform;
+  animation: marquee 13s linear infinite;
+}
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+/* Pause to read */
+a:hover .marquee-track { animation-play-state: paused; }
+
+/* -------- Animated background (under z-10) -------- */
+.animated-gradient {
+  background: linear-gradient(110deg,
+    #10b981 0%,
+    #06b6d4 33%,
+    #84cc16 66%,
+    #10b981 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Soft glow */
+.glow {
+  filter: blur(24px);
+  background:
+    radial-gradient(40% 60% at 15% 50%, rgba(255,255,255,0.12), transparent 60%),
+    radial-gradient(45% 70% at 85% 50%, rgba(255,255,255,0.10), transparent 60%);
+  animation: glowPulse 2.8s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 0.6; }
+  50%     { opacity: 0.95; }
+}
+
+/* Shimmer sweep */
+.shine {
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0.18) 20%,
+    rgba(255,255,255,0.08) 35%,
+    transparent 55%
+  );
+  transform: translateX(-100%);
+  animation: shineMove 3.6s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes shineMove {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Sparkles */
+.sparkles {
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.8) 50%, transparent 51%),
+    radial-gradient(2px 2px at 70% 40%, rgba(255,255,255,0.7) 50%, transparent 51%),
+    radial-gradient(2px 2px at 40% 70%, rgba(255,255,255,0.75) 50%, transparent 51%),
+    radial-gradient(2px 2px at 85% 75%, rgba(255,255,255,0.7) 50%, transparent 51%);
+  background-repeat: no-repeat;
+  animation: sparkleFlicker 2.6s ease-in-out infinite;
+}
+@keyframes sparkleFlicker {
+  0%,100% { opacity: 0.3; filter: drop-shadow(0 0 2px rgba(255,255,255,0.6)); }
+  50%     { opacity: 0.9; filter: drop-shadow(0 0 6px rgba(255,255,255,0.9)); }
+}
+
+/* Tiny badge twinkle */
+.twinkle {
+  display: inline-block;
+  animation: twinkleSpin 1.8s ease-in-out infinite;
+}
+@keyframes twinkleSpin {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50%      { transform: rotate(8deg) scale(1.08); }
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
