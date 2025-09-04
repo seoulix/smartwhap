@@ -196,7 +196,7 @@ const plans: Plan[] = [
 
 export function Pricing() {
   const [yearly, setYearly] = useState(true);
-  const [currency, setCurrency] = useState<CurrencyCode>("USD"); // default before detection
+  const [currency, setCurrency] = useState<CurrencyCode>("INR"); // default before detection
 
   // Detect currency once on mount (query param > locale)
   useEffect(() => {
@@ -205,7 +205,12 @@ export function Pricing() {
       setCurrency(fromQuery);
       return;
     }
-    setCurrency(isIndiaByEnv() ? "INR" : "USD");
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Cover all likely Indian timezones
+    const indianTimezones = ["Asia/Kolkata", "Asia/Calcutta", "IST", "GMT+5:30"];
+    const userIsInIndia = indianTimezones.includes(tz);
+    setCurrency(userIsInIndia ? "INR" : "USD");
   }, []);
 
   const saveText = useMemo(() => (yearly ? "Save 20%" : ""), [yearly]);

@@ -33,6 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Favicon */}
+        <link rel="icon" href="/whatsapp.png" type="image/png" />
+      </head>
       <body className={`font-sans ${dmSans.variable} ${GeistMono.variable}`}>
         <a
           href="#main-content"
