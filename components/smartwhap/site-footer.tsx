@@ -63,7 +63,7 @@ export function SiteFooter() {
             <div className="flex items-center gap-2">
               <Link href="/" aria-label="SmartWhap Home">
                 <img
-                  src="https://smartwhap.com/storage/settings/site_logo_1756486305.png"
+                  src="/images/logo_black.png"
                   alt="SmartWhap Logo"
                   className="h-22 w-auto"
                 />

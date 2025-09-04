@@ -8,11 +8,11 @@ const brands = [
     logo: "/images/mysteryrooms-logo.png",
     link: "https://www.mysteryrooms.in/",
   },
-  {
-    name: "Seoulix Technologies",
-    logo: "/images/seoulixtechnologies-logo.png",
-    link: "https://www.seoulix.com/",
-  },
+  // {
+  //   name: "Seoulix Technologies",
+  //   logo: "/images/seoulixtechnologies-logo.png",
+  //   link: "https://www.seoulix.com/",
+  // },
 
   {
     name: "Tvishi",
@@ -24,11 +24,11 @@ const brands = [
     logo: "/images/challengerooms-logo.png",
     link: "https://challengerooms.in/",
   },
-  {
-    name: "Career Advance",
-    logo: "https://ca.seoulix.com/assets/frontend/images/logo/logo.png",
-    link: "https://careeradvance.com/",
-  },
+  // {
+  //   name: "Career Advance",
+  //   logo: "https://ca.seoulix.com/assets/frontend/images/logo/logo.png",
+  //   link: "https://careeradvance.com/",
+  // },
   {
     name: "Prison Island",
     logo: "/images/prisionisland-logo.png",

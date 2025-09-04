@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -14,14 +14,15 @@ import { Label } from "@/components/ui/label";
 import { AnimatePresence, motion } from "framer-motion";
 import TabbedFeaturesSection from "./switch-features";
 
+type CurrencyCode = "INR" | "USD";
+
 type Plan = {
   name: "Starter" | "Growth" | "Pro" | "Enterprise";
   tagline: string;
-  monthly: number;
-  yearly: number;
+  monthlyINR: number; // your INR monthly price
+  monthlyUSD: number; // your USD monthly price
   features: string[];
   highlighted?: boolean;
-  currency?: string;
   ctaMonthly: string;
   ctaYearly: string;
 };
@@ -44,19 +45,49 @@ const Sparkle = () => (
   </svg>
 );
 
-const formatMoney = (value: number, currency = "₹") =>
-  `${currency}${new Intl.NumberFormat("en-IN", {
+// ---- helpers ----
+const isIndiaByEnv = () => {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    const lang = (navigator.language || "").toLowerCase();
+    return tz.includes("Kolkata") || lang.endsWith("-in");
+  } catch {
+    return false;
+  }
+};
+
+const getCurrencyFromQuery = (): CurrencyCode | null => {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const q = (params.get("currency") || "").toLowerCase();
+  if (q === "inr") return "INR";
+  if (q === "usd") return "USD";
+  return null;
+};
+
+const currencyMeta: Record<
+  CurrencyCode,
+  { symbol: string; locale: string }
+> = {
+  INR: { symbol: "₹", locale: "en-IN" },
+  USD: { symbol: "$", locale: "en-US" },
+};
+
+const formatMoney = (value: number, currency: CurrencyCode) => {
+  const { symbol, locale } = currencyMeta[currency];
+  return `${symbol}${new Intl.NumberFormat(locale, {
     maximumFractionDigits: 0,
   }).format(value)}`;
+};
 
-// ---- Plans (features same; different links per billing period) ----
+// ---- Plans (set both INR & USD monthly; yearly is computed dynamically) ----
 const plans: Plan[] = [
   {
     name: "Starter",
-    tagline: "Perfect for individuals and small businesses getting started with AI-powered WhatsApp automation.",
-    monthly: 1499,
-    yearly: Math.round(1499 * 12 * 0.8),
-    currency: "₹",
+    tagline:
+      "Perfect for individuals and small businesses getting started with AI-powered WhatsApp automation.",
+    monthlyINR: 1499,
+    monthlyUSD: 29, // <-- set your USD monthly here
     features: [
       "Contacts: 5,000",
       "Campaigns: 100",
@@ -71,14 +102,14 @@ const plans: Plan[] = [
       "Embedded Signup: 1",
     ],
     ctaMonthly: "https://app.smartwhap.com/register?plan_id=2",
-    ctaYearly: "https://app.smartwhap.com/register?plan_id=2&billing=yearly",
+    ctaYearly: "https://app.smartwhap.com/register?plan_id=8",
   },
   {
     name: "Growth",
-    tagline: "Designed for growing businesses that need campaigns, automation, and AI integrations.",
-    monthly: 1999,
-    yearly: Math.round(1999 * 12 * 0.8),
-    currency: "₹",
+    tagline:
+      "Designed for growing businesses that need campaigns, automation, and AI integrations.",
+    monthlyINR: 1999,
+    monthlyUSD: 49, // <-- set your USD monthly here
     features: [
       "Contacts: 10,000+",
       "Embedded Signup: 1",
@@ -98,14 +129,14 @@ const plans: Plan[] = [
       "Priority email support",
     ],
     ctaMonthly: "https://app.smartwhap.com/register?plan_id=3",
-    ctaYearly: "https://app.smartwhap.com/register?plan_id=3&billing=yearly",
+    ctaYearly: "https://app.smartwhap.com/register?plan_id=9",
   },
   {
     name: "Pro",
-    tagline: "Tailored for advanced users, with powerful AI to automate workflows and integrate smoothly with your tools.",
-    monthly: 2999,
-    yearly: Math.round(2999 * 12 * 0.8),
-    currency: "₹",
+    tagline:
+      "Tailored for advanced users, with powerful AI to automate workflows and integrate smoothly with your tools.",
+    monthlyINR: 2999,
+    monthlyUSD: 79, // <-- set your USD monthly here
     features: [
       "Contacts: 100,000",
       "Embedded Signup: 1",
@@ -128,14 +159,14 @@ const plans: Plan[] = [
     ],
     highlighted: true,
     ctaMonthly: "https://app.smartwhap.com/register?plan_id=4",
-    ctaYearly: "https://app.smartwhap.com/register?plan_id=4&billing=yearly",
+    ctaYearly: "https://app.smartwhap.com/register?plan_id=10",
   },
   {
     name: "Enterprise",
-    tagline: "Recommended for large companies with unlimited needs & dedicated support.",
-    monthly: 3999,
-    yearly: Math.round(3999 * 12 * 0.8),
-    currency: "₹",
+    tagline:
+      "Recommended for large companies with unlimited needs & dedicated support.",
+    monthlyINR: 3999,
+    monthlyUSD: 119, // <-- set your USD monthly here
     features: [
       "Contacts: Unlimited",
       "Embedded Signup: 1",
@@ -159,19 +190,62 @@ const plans: Plan[] = [
       "Custom workflows",
     ],
     ctaMonthly: "https://app.smartwhap.com/register?plan_id=5",
-    ctaYearly: "https://app.smartwhap.com/register?plan_id=5&billing=yearly",
+    ctaYearly: "https://app.smartwhap.com/register?plan_id=11",
   },
 ];
 
 export function Pricing() {
   const [yearly, setYearly] = useState(true);
+  const [currency, setCurrency] = useState<CurrencyCode>("USD"); // default before detection
+
+  // Detect currency once on mount (query param > locale)
+  useEffect(() => {
+    const fromQuery = getCurrencyFromQuery();
+    if (fromQuery) {
+      setCurrency(fromQuery);
+      return;
+    }
+    setCurrency(isIndiaByEnv() ? "INR" : "USD");
+  }, []);
+
   const saveText = useMemo(() => (yearly ? "Save 20%" : ""), [yearly]);
 
+  // optional manual toggle UI (keep if you want to let users switch)
+  const CurrencyToggle = () => (
+    <div className="mt-6 flex items-center justify-center gap-2">
+      <div className="inline-flex items-center rounded-full border border-zinc-200 bg-white p-1 text-xs shadow-sm">
+        <button
+          type="button"
+          onClick={() => setCurrency("INR")}
+          className={[
+            "px-3 py-1 rounded-full transition",
+            currency === "INR"
+              ? "bg-emerald-600 text-white"
+              : "text-zinc-700 hover:bg-zinc-100",
+          ].join(" ")}
+          aria-pressed={currency === "INR"}
+        >
+          INR
+        </button>
+        <button
+          type="button"
+          onClick={() => setCurrency("USD")}
+          className={[
+            "px-3 py-1 rounded-full transition",
+            currency === "USD"
+              ? "bg-emerald-600 text-white"
+              : "text-zinc-700 hover:bg-zinc-100",
+          ].join(" ")}
+          aria-pressed={currency === "USD"}
+        >
+          USD
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <section
-      id="pricing"
-      className="relative scroll-mt-20 pt-20 md:pt-28 pb-16 md:pb-24"
-    >
+    <section id="pricing" className="relative scroll-mt-20 pt-20 md:pt-28 pb-16 md:pb-24">
       {/* ==== WhatsApp Business API section (before pricing) ==== */}
       <div className="mx-auto max-w-6xl px-4">
         <section id="features" className="scroll-mt-20 mb-10">
@@ -190,7 +264,6 @@ export function Pricing() {
               lock-in, full template control, and real-time webhooks.
             </p>
 
-            {/* quick API highlights row */}
             <div className="mx-auto mt-6 grid w-full gap-2 sm:grid-cols-2 md:grid-cols-3">
               {[
                 "Green-tick onboarding & verified sender",
@@ -213,7 +286,6 @@ export function Pricing() {
             </div>
           </div>
 
-          {/* Your tabbed product explainer stays the same */}
           <TabbedFeaturesSection />
         </section>
       </div>
@@ -244,8 +316,7 @@ export function Pricing() {
           >
             Monthly
           </Label>
-        </div>
-        <div className="mt-2 flex items-center justify-center gap-3">
+          
           <div className="relative">
             <div className="absolute bottom-7 left-1/2 -translate-x-1/2 text-nowrap">
               <AnimatePresence initial={false} mode="popLayout">
@@ -273,6 +344,7 @@ export function Pricing() {
               className="hover:cursor-pointer"
             />
           </div>
+          
           <Label
             htmlFor="billing"
             className={`text-sm ${yearly ? "font-semibold text-zinc-900" : "text-zinc-600"}`}
@@ -281,13 +353,28 @@ export function Pricing() {
           </Label>
         </div>
 
+        {/* Optional currency toggle UI */}
+        {/* <CurrencyToggle /> */}
+
         {/* Cards */}
         <div className="mt-10 grid gap-4 md:mt-12 md:grid-cols-4">
           {plans.map((p) => {
             const isCustom = p.name === "Enterprise";
-            const price = yearly ? p.yearly : p.monthly;
             const isPopular = Boolean(p.highlighted);
-            const href = yearly ? p.ctaYearly : p.ctaMonthly;
+            const hrefBase = yearly ? p.ctaYearly : p.ctaMonthly;
+
+            // attach currency param to your CTA link so backend knows what currency was shown
+            const href =
+              hrefBase + (hrefBase.includes("?") ? "&" : "?") + `currency=${currency.toLowerCase()}`;
+
+            // pick monthly by currency
+            const monthly =
+              currency === "INR" ? p.monthlyINR : p.monthlyUSD;
+
+            // dynamic yearly: 20% off
+            const displayPrice = yearly
+              ? Math.round(monthly * 12 * 0.8)
+              : monthly;
 
             return (
               <motion.div
@@ -354,17 +441,16 @@ export function Pricing() {
                     {/* price block */}
                     <div className="flex items-end gap-2">
                       <span className="text-3xl font-semibold tracking-tight" aria-live="polite">
-                        {formatMoney(price, p.currency ?? "₹")}
+                        {formatMoney(displayPrice, currency)}
                         <span className="text-sm text-zinc-500">{yearly ? "/ yr" : "/ mo"}</span>
                       </span>
                     </div>
                     <p className="mt-1 text-xs text-zinc-500">
                       {yearly ? "Billed annually." : "Billed monthly."}{" "}
-                      {yearly && <span className="text-emerald-700 font-medium">{saveText}</span>}
+                      {yearly && <span className="text-emerald-700 font-medium">Save 20%</span>}
                     </p>
 
-
-                    {/* features (unchanged across billing) */}
+                    {/* features */}
                     <ul className="mt-5 space-y-2">
                       {p.features.map((f) => (
                         <li key={f} className="flex items-start gap-2 text-sm text-zinc-700">
@@ -391,6 +477,7 @@ export function Pricing() {
                         aria-label={`Get started with ${p.name} (${yearly ? "yearly" : "monthly"})`}
                         data-plan={p.name.toLowerCase()}
                         data-billing={yearly ? "yearly" : "monthly"}
+                        data-currency={currency}
                       >
                         Get Started
                       </a>

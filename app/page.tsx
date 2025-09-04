@@ -97,9 +97,9 @@ export default function Page() {
         <Hero />
       </section>
 
-      <section id="brands" className="scroll-mt-20">
+      {/* <section id="brands" className="scroll-mt-20">
         <BrandsTicker />
-      </section>
+      </section> */}
 
       <section id="metrics" className="scroll-mt-20">
         <Metrics />
@@ -146,7 +146,7 @@ export default function Page() {
         href="https://wa.me/917678353155?text=I%20want%20to%20know%20more%20about%20smartWhap"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-white shadow-lg hover:bg-emerald-700 transition-colors"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-white shadow-lg "
         aria-label="Chat on WhatsApp"
       >
         <img src="/whatsapp.png" alt="WhatsApp" className="h-6 w-6" />
@@ -156,7 +156,7 @@ export default function Page() {
       {/* Floating Call button - mobile only */}
       <a
         href="tel:+917678353155"
-        className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-white shadow-lg hover:bg-emerald-700 transition-colors md:hidden"
+        className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-white shadow-lg  md:hidden"
         aria-label="Call us"
       >
         <img src="/phone.png" alt="Call" className="h-6 w-6" />

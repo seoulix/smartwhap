@@ -31,7 +31,7 @@ export function Hero() {
           <div className="mt-6 flex items-center justify-center gap-3">
             <Button className="bg-emerald-600 hover:bg-emerald-700" asChild>
               <a
-                href="https://smartwhap.com/register?plan_id=1"
+                href="https://app.smartwhap.com/register?plan_id=1"
                 aria-label="Activate 14-Day Trial"
               >
                 Activate 14-Day Trial

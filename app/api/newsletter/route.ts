@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPGCD7pA8_7qM5gwoOoOtv6O402JwATJT8-HLlpu1NvdWpPvB7FhiXtb5k8s56TcBm/exec";
+const scripturl = process.env.GOOGLE_SCRIPT_URL;
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const fullUrl = `${SCRIPT_URL}?email=${encodeURIComponent(email)}`;
+    const fullUrl = `${scripturl}?email=${encodeURIComponent(email)}`;
     console.log("2. Making request to:", fullUrl);
 
     const response = await fetch(fullUrl, {

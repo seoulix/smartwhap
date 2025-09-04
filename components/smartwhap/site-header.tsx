@@ -26,7 +26,7 @@ export function SiteHeader() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2" aria-label="SmartWhap Home">
           <img
-            src="https://app.smartwhap.com/storage/settings/site_logo_1756486305.png" // <-- replace with your logo path
+            src="/images/logo_black.png" // <-- replace with your logo path
             alt="SmartWhap Logo"
             className="h-20 w-auto"
           />
